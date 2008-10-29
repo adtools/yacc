@@ -14,13 +14,14 @@
 /*  the body either are not useful outside of semantic actions or	*/
 /*  are conditional.							*/
 
-char *banner[] =
+const char *banner[] =
 {
     "#ifndef lint",
     "static const char yysccsid[] = \"@(#)yaccpar	1.9 (Berkeley) 02/21/93\";",
     "#endif",
     "",
     "#include <stdlib.h>",
+    "#include <string.h>",
     "",
     "#define YYBYACC 1",
     CONCAT1("#define YYMAJOR ", YYMAJOR),
@@ -29,18 +30,30 @@ char *banner[] =
     CONCAT1("#define YYPATCH ", YYPATCH),
 #endif
     "",
-    "#define YYEMPTY (-1)",
-    "#define yyclearin    (yychar = YYEMPTY)",
-    "#define yyerrok      (yyerrflag = 0)",
-    "#define YYRECOVERING (yyerrflag != 0)",
+    "#define YYEMPTY        (-1)",
+    "#define yyclearin      (yychar = YYEMPTY)",
+    "#define yyerrok        (yyerrflag = 0)",
+    "#define YYRECOVERING() (yyerrflag != 0)",
     "",
-    "extern int yyparse(void);",
+    "/* compatibility with bison */",
+    "#ifdef YYPARSE_PARAM",
+    "/* compatibility with FreeBSD */",
+    "#ifdef YYPARSE_PARAM_TYPE",
+    "#define YYPARSE_DECL() yyparse(YYPARSE_PARAM_TYPE YYPARSE_PARAM)",
+    "#else",
+    "#define YYPARSE_DECL() yyparse(void *YYPARSE_PARAM)",
+    "#endif",
+    "#else",
+    "#define YYPARSE_DECL() yyparse(void)",
+    "#endif /* YYPARSE_PARAM */",
+    "",
+    "extern int YYPARSE_DECL();",
     "",
     "static int yygrowstack(void);",
     0
 };
 
-char *tables[] =
+const char *tables[] =
 {
     "extern short yylhs[];",
     "extern short yylen[];",
@@ -59,7 +72,7 @@ char *tables[] =
     0
 };
 
-char *header[] =
+const char *header[] =
 {
     "#if YYDEBUG",
     "#include <stdio.h>",
@@ -93,16 +106,17 @@ char *header[] =
     "static short   *yyss;",
     "static short   *yysslim;",
     "static YYSTYPE *yyvs;",
-    "static int      yystacksize;",
+    "static unsigned yystacksize;",
     0
 };
 
-char *body[] =
+const char *body[] =
 {
     "/* allocate initial stack or double stack size, up to YYMAXDEPTH */",
     "static int yygrowstack(void)",
     "{",
-    "    int newsize, i;",
+    "    int i;",
+    "    unsigned newsize;",
     "    short *newss;",
     "    YYSTYPE *newvs;",
     "",
@@ -135,16 +149,17 @@ char *body[] =
     "    return 0;",
     "}",
     "",
-    "#define YYABORT goto yyabort",
+    "#define YYABORT  goto yyabort",
     "#define YYREJECT goto yyabort",
     "#define YYACCEPT goto yyaccept",
-    "#define YYERROR goto yyerrlab",
+    "#define YYERROR  goto yyerrlab",
+    "",
     "int",
-    "yyparse(void)",
+    "YYPARSE_DECL()",
     "{",
-    "    register int yym, yyn, yystate;",
+    "    int yym, yyn, yystate;",
     "#if YYDEBUG",
-    "    register const char *yys;",
+    "    const char *yys;",
     "",
     "    if ((yys = getenv(\"YYDEBUG\")) != 0)",
     "    {",
@@ -157,11 +172,13 @@ char *body[] =
     "    yynerrs = 0;",
     "    yyerrflag = 0;",
     "    yychar = YYEMPTY;",
+    "    yystate = 0;",
     "",
     "    if (yyss == NULL && yygrowstack()) goto yyoverflow;",
     "    yyssp = yyss;",
     "    yyvsp = yyvs;",
-    "    *yyssp = yystate = 0;",
+    "    yystate = 0;",
+    "    *yyssp = 0;",
     "",
     "yyloop:",
     "    if ((yyn = yydefred[yystate]) != 0) goto yyreduce;",
@@ -191,7 +208,8 @@ char *body[] =
     "        {",
     "            goto yyoverflow;",
     "        }",
-    "        *++yyssp = yystate = yytable[yyn];",
+    "        yystate = yytable[yyn];",
+    "        *++yyssp = yytable[yyn];",
     "        *++yyvsp = yylval;",
     "        yychar = YYEMPTY;",
     "        if (yyerrflag > 0)  --yyerrflag;",
@@ -232,7 +250,8 @@ char *body[] =
     "                {",
     "                    goto yyoverflow;",
     "                }",
-    "                *++yyssp = yystate = yytable[yyn];",
+    "                yystate = yytable[yyn];",
+    "                *++yyssp = yytable[yyn];",
     "                *++yyvsp = yylval;",
     "                goto yyloop;",
     "            }",
@@ -275,13 +294,16 @@ char *body[] =
     "                YYPREFIX, yystate, yyn, yyrule[yyn]);",
     "#endif",
     "    yym = yylen[yyn];",
-    "    yyval = yyvsp[1-yym];",
+    "    if (yym)",
+    "        yyval = yyvsp[1-yym];",
+    "    else",
+    "        memset(&yyval, 0, sizeof yyval);",
     "    switch (yyn)",
     "    {",
     0
 };
 
-char *trailer[] =
+const char *trailer[] =
 {
     "    }",
     "    yyssp -= yym;",
@@ -329,7 +351,7 @@ char *trailer[] =
     "    {",
     "        goto yyoverflow;",
     "    }",
-    "    *++yyssp = yystate;",
+    "    *++yyssp = (short) yystate;",
     "    *++yyvsp = yyval;",
     "    goto yyloop;",
     "",
@@ -345,12 +367,12 @@ char *trailer[] =
     0
 };
 
-void write_section(char *section[])
+void write_section(const char *section[])
 {
-    register int c;
-    register int i;
-    register char *s;
-    register FILE *f;
+    int c;
+    int i;
+    const char *s;
+    FILE *f;
 
     f = code_file;
     for (i = 0; (s = section[i]) != 0; ++i)

@@ -126,4 +126,7 @@ depend:
 
 $(OBJS) : defs.h
 
+main$o \
+skeleton$o : makefile VERSION
+
 # DO NOT DELETE THIS LINE -- make depend depends on it.

@@ -1,10 +1,10 @@
 AmigaOS4 port of Berkeley Yacc.
 
-The official sourcecode has been updated May 9, 2007.
+The official sourcecode has been updated August 27, 2008.
 
 Please read the original README file for information.
 
-The sources are included in SDK:Local/source
+Find the sources on http://sourceforge.net/projects/abc-shell
 
 For comments on the port and possible bugfixes, please send an email to me.
 

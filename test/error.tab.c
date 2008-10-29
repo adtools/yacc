@@ -3,44 +3,80 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #endif
 
 #include <stdlib.h>
+#include <string.h>
 
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
 
-#define YYEMPTY (-1)
-#define yyclearin    (yychar = YYEMPTY)
-#define yyerrok      (yyerrflag = 0)
-#define YYRECOVERING (yyerrflag != 0)
+#define YYEMPTY        (-1)
+#define yyclearin      (yychar = YYEMPTY)
+#define yyerrok        (yyerrflag = 0)
+#define YYRECOVERING() (yyerrflag != 0)
 
-extern int yyparse(void);
+/* compatibility with bison */
+#ifdef YYPARSE_PARAM
+/* compatibility with FreeBSD */
+#ifdef YYPARSE_PARAM_TYPE
+#define YYPARSE_DECL() yyparse(YYPARSE_PARAM_TYPE YYPARSE_PARAM)
+#else
+#define YYPARSE_DECL() yyparse(void *YYPARSE_PARAM)
+#endif
+#else
+#define YYPARSE_DECL() yyparse(void)
+#endif /* YYPARSE_PARAM */
+
+extern int YYPARSE_DECL();
 
 static int yygrowstack(void);
-#define YYPREFIX "yy"
+#define yyparse    error_parse
+#define yylex      error_lex
+#define yyerror    error_error
+#define yychar     error_char
+#define yyval      error_val
+#define yydebug    error_debug
+#define yynerrs    error_nerrs
+#define yyerrflag  error_errflag
+#define yyss       error_ss
+#define yyssp      error_ssp
+#define yyvs       error_vs
+#define yyvsp      error_vsp
+#define yylhs      error_lhs
+#define yylen      error_len
+#define yydefred   error_defred
+#define yydgoto    error_dgoto
+#define yysindex   error_sindex
+#define yyrindex   error_rindex
+#define yygindex   error_gindex
+#define yytable    error_table
+#define yycheck    error_check
+#define yyname     error_name
+#define yyrule     error_rule
+#define YYPREFIX "error_"
 #define YYERRCODE 256
-short yylhs[] = {                                        -1,
+static const short error_lhs[] = {                       -1,
     0,
 };
-short yylen[] = {                                         2,
+static const short error_len[] = {                        2,
     1,
 };
-short yydefred[] = {                                      0,
+static const short error_defred[] = {                     0,
     1,    0,
 };
-short yydgoto[] = {                                       2,
+static const short error_dgoto[] = {                      2,
 };
-short yysindex[] = {                                   -256,
+static const short error_sindex[] = {                  -256,
     0,    0,
 };
-short yyrindex[] = {                                      0,
+static const short error_rindex[] = {                     0,
     0,    0,
 };
-short yygindex[] = {                                      0,
+static const short error_gindex[] = {                     0,
 };
 #define YYTABLESIZE 0
-short yytable[] = {                                       1,
+static const short error_table[] = {                      1,
 };
-short yycheck[] = {                                     256,
+static const short error_check[] = {                    256,
 };
 #define YYFINAL 2
 #ifndef YYDEBUG
@@ -48,12 +84,14 @@ short yycheck[] = {                                     256,
 #endif
 #define YYMAXTOKEN 0
 #if YYDEBUG
-char *yyname[] = {
+static const char *error_name[] = {
+
 "end-of-file",
 };
-char *yyrule[] = {
+static const char *error_rule[] = {
 "$accept : S",
 "S : error",
+
 };
 #endif
 #ifndef YYSTYPE
@@ -91,16 +129,17 @@ YYSTYPE  yylval;
 static short   *yyss;
 static short   *yysslim;
 static YYSTYPE *yyvs;
-static int      yystacksize;
+static unsigned yystacksize;
 #line 4 "error.y"
 main(){printf("yyparse() = %d\n",yyparse());}
 yylex(){return-1;}
 yyerror(s)char*s;{printf("%s\n",s);}
-#line 101 "error.tab.c"
+#line 138 "error.tab.c"
 /* allocate initial stack or double stack size, up to YYMAXDEPTH */
 static int yygrowstack(void)
 {
-    int newsize, i;
+    int i;
+    unsigned newsize;
     short *newss;
     YYSTYPE *newvs;
 
@@ -133,16 +172,17 @@ static int yygrowstack(void)
     return 0;
 }
 
-#define YYABORT goto yyabort
+#define YYABORT  goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
-#define YYERROR goto yyerrlab
+#define YYERROR  goto yyerrlab
+
 int
-yyparse(void)
+YYPARSE_DECL()
 {
-    register int yym, yyn, yystate;
+    int yym, yyn, yystate;
 #if YYDEBUG
-    register const char *yys;
+    const char *yys;
 
     if ((yys = getenv("YYDEBUG")) != 0)
     {
@@ -155,11 +195,13 @@ yyparse(void)
     yynerrs = 0;
     yyerrflag = 0;
     yychar = YYEMPTY;
+    yystate = 0;
 
     if (yyss == NULL && yygrowstack()) goto yyoverflow;
     yyssp = yyss;
     yyvsp = yyvs;
-    *yyssp = yystate = 0;
+    yystate = 0;
+    *yyssp = 0;
 
 yyloop:
     if ((yyn = yydefred[yystate]) != 0) goto yyreduce;
@@ -189,7 +231,8 @@ yyloop:
         {
             goto yyoverflow;
         }
-        *++yyssp = yystate = yytable[yyn];
+        yystate = yytable[yyn];
+        *++yyssp = yytable[yyn];
         *++yyvsp = yylval;
         yychar = YYEMPTY;
         if (yyerrflag > 0)  --yyerrflag;
@@ -230,7 +273,8 @@ yyinrecovery:
                 {
                     goto yyoverflow;
                 }
-                *++yyssp = yystate = yytable[yyn];
+                yystate = yytable[yyn];
+                *++yyssp = yytable[yyn];
                 *++yyvsp = yylval;
                 goto yyloop;
             }
@@ -271,7 +315,10 @@ yyreduce:
                 YYPREFIX, yystate, yyn, yyrule[yyn]);
 #endif
     yym = yylen[yyn];
-    yyval = yyvsp[1-yym];
+    if (yym)
+        yyval = yyvsp[1-yym];
+    else
+        memset(&yyval, 0, sizeof yyval);
     switch (yyn)
     {
     }
@@ -320,7 +367,7 @@ to state %d\n", YYPREFIX, *yyssp, yystate);
     {
         goto yyoverflow;
     }
-    *++yyssp = yystate;
+    *++yyssp = (short) yystate;
     *++yyvsp = yyval;
     goto yyloop;
 

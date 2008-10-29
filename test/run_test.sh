@@ -11,7 +11,7 @@ do
 	*)
 		root=`basename $i .y`
 		ROOT="test-$root"
-		../yacc -v -d -b $ROOT $i
+		../yacc -v -d -p ${root}_ -b $ROOT $i
 		for type in .output .tab.c .tab.h
 		do
 			REF=${root}${type}

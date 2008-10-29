@@ -1,3 +1,111 @@
+2008-08-27  Thomas Dickey  <tom@crayon>
+
+	* test/calc.tab.c, test/error.tab.c, test/ftp.tab.c, test/grammar.tab.c:
+	better implementation of YYPARSE_PARAM, using YYPARSE_DECL() macro
+
+	* VERSION: bump
+
+	* skeleton.c:
+	better implementation of YYPARSE_PARAM, using YYPARSE_DECL() macro
+
+	* test/calc.tab.c, test/error.tab.c, test/ftp.tab.c, test/grammar.tab.c, skeleton.c:
+	change YYRECOVERING to YYRECOVERING(), for compatibility with other yacc's.
+
+	* configure: regen'd
+
+	* configure.in: add -Wwrite-strings to warnings
+
+	* test/ftp.tab.c, test/grammar.tab.c, test/calc.tab.c, test/error.tab.c:
+	add YYPARSE_PARAM and YYPARSE_PARAM_TYPE
+
+	* skeleton.c:
+	add YYPARSE_PARAM (bison) and YYPARSE_PARAM_TYPE (FreeBSD) features.
+
+	* main.c, defs.h, output.c, skeleton.c, symtab.c, error.c, reader.c:
+	fixes for gcc -Wwrite-strings
+
+	* test/calc.tab.c, test/error.tab.c, test/ftp.tab.c, test/grammar.tab.c:
+	generate the tables as static-const (this is an interface change)
+
+	* output.c: realign columns in start_table()
+
+	* output.c:
+	generate the tables as static-const (this is an interface change)
+
+	* output.c: reorder functions to eliminate forward-references
+
+	* test/calc.tab.c, test/error.tab.c, test/ftp.tab.c, test/grammar.tab.c:
+	remove 'register' keywords
+
+2008-08-26  Thomas Dickey  <tom@crayon>
+
+	* warshall.c, verbose.c, symtab.c, skeleton.c, reader.c, output.c, mkpar.c, main.c, lr0.c, lalr.c, graph.c, error.c, closure.c:
+	remove 'register' keywords
+
+2008-08-25  Thomas Dickey  <tom@crayon>
+
+	* test/ftp.tab.c: regen'd
+
+	* reader.c:
+	improve the left-curly fix by testing after blanks, to avoid having a
+	" {" at the beginning of a line.
+
+	* test/error.tab.c, test/grammar.tab.c: regen'd
+
+	* output.c:
+	move the remaining newline-counting into write_XXX functions.
+
+	* test/calc.tab.c: regen'd
+
+	* output.c:
+	simplify part of the output_file formatting using new functions, e.g.,
+	start_int_table(), output_newline().
+
+	* reader.c:
+	modify copy_action() to indent the first character, it if is is left-curly
+	brace.  That makes the output look more like the original, as well as makes
+	it simpler to edit (not confuse editors which look for a left-curly in the
+	first column as if it were the beginning of a function).
+
+	* skeleton.c: minor fixes to avoid gcc -Wconversion warnings
+
+	* output.c: align the #define's produced for "-p" option
+
+	* test/run_test.sh: use the "-p" option for better coverage.
+
+	* output.c: simplify output_prefix() with new define_prefixed()
+
+	* skeleton.c: include string.h, for memset()
+	change stack size to unsigned to fix gcc -Wconversion warnings.
+
+	* VERSION: bump to 2008/8/25
+
+	* makefile.in: add dependency on VERSION file.
+
+2008-08-24  Thomas Dickey  <tom@crayon>
+
+	* VERSION: bump
+
+	* lalr.c: improved memory-leak checking by freeing data in includes[]
+
+	* test/error.tab.c, test/ftp.tab.c, test/grammar.tab.c, test/calc.tab.c:
+	update to match skeleton-change
+
+	* configure: regen'd
+
+	* skeleton.c: Add fix for stack discussed
+		http://undeadly.org/cgi?action=article&sid=20080708155228
+	and applied
+		http://www.openbsd.org/cgi-bin/cvsweb/src/usr.bin/yacc/skeleton.c.diff?r1=1.28&r2=1.29
+
+	* aclocal.m4: resync with my-autoconf (no major changes)
+
+2008-03-14  Thomas Dickey  <tom@crayon>
+
+	* config.sub: update to 2008-03-08
+
+	* config.guess: update to 2008-03-12
+
 2007-05-09  Thomas Dickey  <tom@crayon>
 
 	* main.c: close graph, verbose files if opened, on exit.

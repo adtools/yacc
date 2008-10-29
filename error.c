@@ -4,7 +4,7 @@
 
 #include "defs.h"
 
-void fatal(char *msg)
+void fatal(const char *msg)
 {
     fprintf(stderr, "%s: f - %s\n", myname, msg);
     done(2);
@@ -16,7 +16,7 @@ void no_space(void)
     done(2);
 }
 
-void open_error(char *filename)
+void open_error(const char *filename)
 {
     fprintf(stderr, "%s: f - cannot open \"%s\"\n", myname, filename);
     done(2);
@@ -31,7 +31,7 @@ void unexpected_EOF(void)
 
 void print_pos(char *st_line, char *st_cptr)
 {
-    register char *s;
+    char *s;
 
     if (st_line == 0)
 	return;
