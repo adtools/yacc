@@ -17,7 +17,7 @@ INSTALL_DATA	= @INSTALL_DATA@
 transform	= @program_transform_name@
 
 DEFINES		=
-EXTRA_CFLAGS	= @EXTRA_CFLAGS@
+EXTRA_CFLAGS	= 
 CPPFLAGS	= -I. -I$(srcdir) $(DEFINES) -DHAVE_CONFIG_H -DYYPATCH=`cat $(srcdir)/VERSION` @CPPFLAGS@
 CFLAGS		= @CFLAGS@ $(CPPFLAGS) $(EXTRA_CFLAGS)
 
@@ -93,11 +93,10 @@ uninstall:
 	- rm -f $(mandir)/$(actual_man)
 
 .c$o:
-	@RULE_CC@
-	@ECHO_CC@$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) $<
 
 $(THIS)$x : $(OBJS)
-	@ECHO_LD@$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(THIS).man : $(THIS).1
 	- nroff -man $(srcdir)/$(THIS).1 >$@
