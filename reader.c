@@ -1566,7 +1566,7 @@ static void copy_action(void)
 static int mark_symbol(void)
 {
     int c;
-    bucket *bp;
+    bucket *bp=NULL;
 
     c = cptr[1];
     if (c == '%' || c == '\\')

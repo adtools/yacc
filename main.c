@@ -14,7 +14,7 @@ char tflag;
 char vflag;
 
 #ifdef __amigaos4__
-const char *amiversion __attribute__((used)) = "$VER: yacc 53.1 (29.10.08)";
+const char *amiversion __attribute__((used)) = "$VER: yacc 53.2 (31.10.08)";
 #endif
 
 const char *symbol_prefix;

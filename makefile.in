@@ -17,7 +17,7 @@ INSTALL_DATA	= @INSTALL_DATA@
 transform	= @program_transform_name@
 
 DEFINES		=
-EXTRA_CFLAGS	= 
+EXTRA_CFLAGS	= -Wall -Wwrite-strings
 CPPFLAGS	= -I. -I$(srcdir) $(DEFINES) -DHAVE_CONFIG_H -DYYPATCH=`cat $(srcdir)/VERSION` @CPPFLAGS@
 CFLAGS		= @CFLAGS@ $(CPPFLAGS) $(EXTRA_CFLAGS)
 
@@ -30,6 +30,12 @@ exec_prefix	= @exec_prefix@
 bindir		= $(DESTDIR)@bindir@
 mandir		= $(DESTDIR)@mandir@/man1
 manext		= 1
+
+ifeq ($(CC), ppc-amigaos-gcc)
+LIBS	       += -lunix
+prefix		= /SDK/Local
+bindir		= /SDK/Local/C
+endif
 
 x		= @EXEEXT@
 o		= .@OBJEXT@
@@ -102,7 +108,7 @@ $(THIS).man : $(THIS).1
 	- nroff -man $(srcdir)/$(THIS).1 >$@
 
 mostlyclean :
-	- rm -f core .nfs* *$o *.bak *.BAK *.log *.man *.out
+	- rm -f core .nfs* *$o *.bak *.BAK *.log *.man *.out *~
 
 clean : mostlyclean
 	- rm -f $(THIS)$x
